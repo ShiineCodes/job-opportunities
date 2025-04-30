@@ -1,55 +1,176 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input } from '@heroui/input';
-import { Textarea } from '@heroui/input';
-import { Button } from '@heroui/button';
-import { Card, CardHeader, CardBody, CardFooter } from '@heroui/card';
-import { Divider } from '@heroui/divider';
-import { Form } from '@heroui/form';
 
-export default function CreateJobPage() {
+import { Button } from '@heroui/button';
+import { Input, Textarea } from '@heroui/input';
+import { Autocomplete, AutocompleteItem } from '@heroui/autocomplete';
+import { addToast } from '@heroui/toast';
+
+export default function JobForm() {
   const router = useRouter();
 
   const [title, setTitle] = useState('');
+  const [company, setCompany] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
+  const [jobType, setJobType] = useState('Full-time');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  const jobTypes = [
+    { label: 'Full time', value: 'full-time' },
+    { label: 'Part time', value: 'part-time' },
+    { label: 'Remote', value: 'remote' },
+    { label: 'Internship', value: 'internship' },
+  ];
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess(false);
 
-    // ⚠️ Since we're using static JSON, this would typically POST to an API or write to a file.
-    // In this demo we'll just log it.
-    const newJob = {
-      id: Math.floor(Math.random() * 10000),
-      title,
-      location,
-      description,
-    };
+    if (!title || !company || !location || !description) {
+      setError('All fields are required.');
+      setLoading(false);
 
-    window.console.log('New job created:', newJob);
+      return;
+    }
 
-    // Simulate navigation back to jobs list
-    router.push('/jobs');
+    const newJob = { title, company, location, description, jobType };
+
+    const res = await fetch('/api/jobs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newJob),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+
+      if (data.message) {
+        setSuccess(true);
+        setLoading(false);
+        addToast({
+          title: 'Success',
+          description: 'Job created successfully',
+          color: 'success',
+        });
+        setTimeout(() => router.push('/'), 1500);
+      }
+    } else {
+      setError('Something went wrong.');
+      setLoading(false);
+    }
   };
 
   return (
-    <div className='max-w-xl mx-auto p-6'>
-      <Card className='max-w-[400px]'>
-        <CardHeader className='flex gap-3'>
-          <div className='flex flex-col'>
-            <p className='text-md'>HeroUI</p>
-            <p className='text-small text-default-500'>heroui.com</p>
-          </div>
-        </CardHeader>
-        <Divider />
-        <CardBody>
-          <p>Make beautiful websites regardless of your design experience.</p>
-        </CardBody>
-        <Divider />
-        <CardFooter>This is footer. Action buttons go here.</CardFooter>
-      </Card>
+    <div className='max-w-xl mx-auto p-6 space-y-6'>
+      <h1 className='text-2xl font-semibold'>Add New Job</h1>
+
+      <form className='space-y-4' onSubmit={handleSubmit}>
+        {/* Job Title */}
+        <div>
+          <label
+            className='block text-sm font-medium text-gray-700'
+            htmlFor='job-title'
+          >
+            Job Title
+          </label>
+          <Input
+            isRequired
+            className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+            id='job-title'
+            type='text'
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
+
+        {/* Company */}
+        <div>
+          <label className='block text-sm font-medium text-gray-700'>
+            Company
+          </label>
+          <Input
+            isRequired
+            className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+            type='text'
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+          />
+        </div>
+
+        {/* Location */}
+        <div>
+          <label className='block text-sm font-medium text-gray-700'>
+            Location
+          </label>
+          <Input
+            isRequired
+            className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+            type='text'
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          />
+        </div>
+
+        {/* Job Type Dropdown */}
+        <div>
+          <label
+            id='job-type'
+            htmlFor='job-type-select'
+            className='block text-sm font-medium text-gray-700'
+          >
+            Job Type
+          </label>
+          <Autocomplete
+            aria-labelledby='job-type'
+            isRequired
+            inputProps={{ id: 'job-type-select' }}
+            defaultSelectedKey={'full-time'}
+            className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+            value={jobType}
+            onSelectionChange={(key) => {
+              setJobType(key as string);
+            }}
+          >
+            {jobTypes.map((job) => (
+              <AutocompleteItem key={job.value}>{job.label}</AutocompleteItem>
+            ))}
+          </Autocomplete>
+        </div>
+
+        {/* Description */}
+        <div>
+          <label className='block text-sm font-medium text-gray-700'>
+            Description
+          </label>
+          <Textarea
+            isRequired
+            className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+            rows={4}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
+
+        {/* Submit Button */}
+        <div>
+          <Button
+            className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none'
+            disabled={loading}
+            type='submit'
+          >
+            {loading ? 'Adding...' : 'Add Job'}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }
