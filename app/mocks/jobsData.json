@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "title": "Frontend Developer",
+    "company": "Spotify",
+    "location": "Stockholm, Sweden",
+    "description": "We’re looking for a talented Frontend Developer with React and TypeScript experience to join our team.",
+    "jobType": "full-time"
+  },
+  {
+    "id": 2,
+    "title": "Product Manager",
+    "company": "Klarna",
+    "location": "Berlin, Germany",
+    "description": "As a Product Manager, you’ll work closely with our engineering and design teams to build amazing products.",
+    "jobType": "remote"
+  },
+  {
+    "id": 3,
+    "title": "UX Designer",
+    "company": "IKEA",
+    "location": "Malmö, Sweden",
+    "description": "Join our design team to craft intuitive experiences for millions of customers worldwide.",
+    "jobType": "part-time"
+  },
+  {
+    "id": 4,
+    "title": "Data Scientist",
+    "company": "Zalando",
+    "location": "Berlin, Germany",
+    "description": "We are looking for a Data Scientist to help us analyze and interpret complex data sets.",
+    "jobType": "internship"
+  },
+  {
+    "id": 5,
+    "title": "Backend Engineer",
+    "company": "Trello",
+    "location": "Remote",
+    "description": "Join our team as a Backend Engineer and help us build scalable applications.",
+    "jobType": "remote"
+  }
+]
