@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .heroui-secondary-color {
+    color: hsl(var(--heroui-secondary) / var(--heroui-secondary-opacity, 1));
+  }
+}

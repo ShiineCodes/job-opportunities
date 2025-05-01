@@ -25,8 +25,8 @@ export const siteConfig = {
       href: "/about",
     },
     {
-      label: "Create Job",
-      href: "/jobs/create",
+      label: "Jobs",
+      href: "/jobs",
       bgColor: "dodgerblue",
     },
   ],

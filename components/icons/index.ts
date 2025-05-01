@@ -1,2 +1,1 @@
-export * from './Check';
-export * from './Warning';
+export * from "./JobIcon";
