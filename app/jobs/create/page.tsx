@@ -1,37 +1,36 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@heroui/button";
-import { Input, Textarea } from "@heroui/input";
-import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
-import { addToast } from "@heroui/toast";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@heroui/button';
+import { Input, Textarea } from '@heroui/input';
+import { Autocomplete, AutocompleteItem } from '@heroui/autocomplete';
+import { addToast } from '@heroui/toast';
 
-import { Job, JobRequest } from "../types";
+import { Job, JobRequest } from '../types';
 
 export default function JobForm() {
   const router = useRouter();
 
-  const [title, setTitle] = useState("");
-  const [company, setCompany] = useState("");
-  const [location, setLocation] = useState("");
-  const [description, setDescription] = useState("");
-  const [jobType, setJobType] = useState<JobRequest["jobType"]>("full-time");
+  const [title, setTitle] = useState('');
+  const [company, setCompany] = useState('');
+  const [location, setLocation] = useState('');
+  const [description, setDescription] = useState('');
+  const [jobType, setJobType] = useState<JobRequest['jobType']>('full-time');
   const [loading, setLoading] = useState(false);
 
-  const jobTypes: Array<{ label: string; value: JobRequest["jobType"] }> = [
-    { label: "Full time", value: "full-time" },
-    { label: "Part time", value: "part-time" },
-    { label: "Remote", value: "remote" },
-    { label: "Internship", value: "internship" },
+  const jobTypes: Array<{ label: string; value: JobRequest['jobType'] }> = [
+    { label: 'Full time', value: 'full-time' },
+    { label: 'Part time', value: 'part-time' },
+    { label: 'Remote', value: 'remote' },
+    { label: 'Internship', value: 'internship' },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const shouldThrow = localStorage.getItem("jobCreateError") === "true";
+    const shouldThrow = localStorage.getItem('jobCreateError') === 'true';
     const newJob: JobRequest = {
       title,
       company,
@@ -41,9 +40,9 @@ export default function JobForm() {
       shouldThrow,
     };
 
-    const response = await fetch("/api/jobs", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const response = await fetch('/api/jobs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newJob),
     });
 
@@ -51,64 +50,64 @@ export default function JobForm() {
       const data = await response.json();
 
       // Read from local storage and check if job already exists.
-      const jobsList = localStorage.getItem("jobs");
+      const jobsList = localStorage.getItem('jobs');
       const jobs = jobsList ? JSON.parse(jobsList) : [];
       const jobExists = jobs.some(
         (job: Job) =>
           job.title === title &&
           job.location === location &&
-          job.company === company,
+          job.company === company
       );
 
       // If job already exists, show warning toast message.
       if (jobExists) {
         addToast({
-          title: "Error",
-          description: "Job with these fields, already exists!",
-          color: "warning",
+          title: 'Error',
+          description: 'Job with these fields, already exists!',
+          color: 'warning',
         });
 
         return;
       }
 
       // Here we add new job and preserve the old job list data.
-      localStorage.setItem("jobs", JSON.stringify([...jobs, data]));
+      localStorage.setItem('jobs', JSON.stringify([...jobs, data]));
 
       setLoading(false);
       addToast({
-        title: "Success",
-        description: "Job created successfully",
-        color: "success",
+        title: 'Success',
+        description: 'Job created successfully',
+        color: 'success',
       });
-      setTimeout(() => router.push("/jobs"), 1500);
+      setTimeout(() => router.push('/jobs'), 1500);
     } else {
       setLoading(false);
       addToast({
-        title: "Error",
+        title: 'Error',
         description: response.statusText,
-        color: "danger",
+        color: 'danger',
       });
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">Add New Job</h1>
+    <div className='max-w-xl mx-auto p-6 space-y-6'>
+      <h1 className='text-2xl font-semibold'>Add New Job</h1>
 
-      <form className="space-y-4" onSubmit={handleSubmit}>
+      <form className='space-y-4' onSubmit={handleSubmit}>
         {/* Job Title */}
         <div>
           <label
-            className="block text-sm font-medium text-gray-700"
-            htmlFor="job-title"
+            className='block text-sm font-medium text-gray-700'
+            htmlFor='job-title'
           >
             Job Title
           </label>
           <Input
             isRequired
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            id="job-title"
-            type="text"
+            className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+            id='job-title'
+            type='text'
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
@@ -116,13 +115,13 @@ export default function JobForm() {
 
         {/* Company */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className='block text-sm font-medium text-gray-700'>
             Company
           </label>
           <Input
             isRequired
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            type="text"
+            className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+            type='text'
             value={company}
             onChange={(e) => setCompany(e.target.value)}
           />
@@ -130,13 +129,13 @@ export default function JobForm() {
 
         {/* Location */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className='block text-sm font-medium text-gray-700'>
             Location
           </label>
           <Input
             isRequired
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            type="text"
+            className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+            type='text'
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
@@ -145,21 +144,21 @@ export default function JobForm() {
         {/* Job Type Dropdown */}
         <div>
           <label
-            className="block text-sm font-medium text-gray-700"
-            htmlFor="job-type-select"
-            id="job-type"
+            className='block text-sm font-medium text-gray-700'
+            htmlFor='job-type-select'
+            id='job-type'
           >
             Job Type
           </label>
           <Autocomplete
             isRequired
-            aria-labelledby="job-type"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            defaultSelectedKey={"full-time"}
-            inputProps={{ id: "job-type-select" }}
+            aria-labelledby='job-type'
+            className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+            defaultSelectedKey={'full-time'}
+            inputProps={{ id: 'job-type-select' }}
             value={jobType}
             onSelectionChange={(key) => {
-              setJobType(key as JobRequest["jobType"]);
+              setJobType(key as JobRequest['jobType']);
             }}
           >
             {jobTypes.map((job) => (
@@ -170,12 +169,12 @@ export default function JobForm() {
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className='block text-sm font-medium text-gray-700'>
             Description
           </label>
           <Textarea
             isRequired
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
             rows={4}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -185,11 +184,11 @@ export default function JobForm() {
         {/* Submit Button */}
         <div>
           <Button
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
+            className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none'
             disabled={loading}
-            type="submit"
+            type='submit'
           >
-            {loading ? "Adding..." : "Add Job"}
+            {loading ? 'Adding...' : 'Add Job'}
           </Button>
         </div>
       </form>
