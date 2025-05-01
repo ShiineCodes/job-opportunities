@@ -1,0 +1,30 @@
+import type { JobRequest } from "@/app/jobs/types";
+
+import { NextRequest, NextResponse } from "next/server";
+
+async function createJob(req: NextRequest) {
+  const body = await req.json();
+  const { title, location, description, company, shouldThrow } =
+    body as JobRequest;
+
+  if (!title || !location || !description || !company) {
+    return NextResponse.json(
+      { error: "All fields are required" },
+      { status: 400 },
+    );
+  }
+
+  if (shouldThrow) {
+    return NextResponse.json(
+      {},
+      { status: 500, statusText: "Job already exists" },
+    );
+  }
+
+  return NextResponse.json(
+    { ...body, message: "Job added successfully" },
+    { status: 200 },
+  );
+}
+
+export const POST = createJob;

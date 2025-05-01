@@ -24,6 +24,11 @@ export const siteConfig = {
       label: "About",
       href: "/about",
     },
+    {
+      label: "Jobs",
+      href: "/jobs",
+      bgColor: "dodgerblue",
+    },
   ],
   navMenuItems: [
     {
