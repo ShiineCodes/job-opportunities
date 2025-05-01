@@ -9,7 +9,7 @@ type Job = {
 
 async function createJob(req: NextRequest) {
   const body = await req.json();
-  const { title, location, description, company } = body as Job;
+  const { title, location, description, company, shouldThrow } = body as Job;
 
   if (!title || !location || !description || !company) {
     return NextResponse.json(
@@ -38,6 +38,12 @@ async function createJob(req: NextRequest) {
   const updatedJobs = [...jobs, body];
 
   localStorage.setItem('jobs', JSON.stringify(updatedJobs)); */
+  if (shouldThrow) {
+    return NextResponse.json(
+      {},
+      { status: 500, statusText: 'Job already exists' }
+    );
+  }
 
   return NextResponse.json(
     { ...body, message: 'Job added successfully' },

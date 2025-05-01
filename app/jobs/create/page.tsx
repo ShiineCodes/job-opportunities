@@ -19,9 +19,6 @@ export default function JobForm() {
   const [jobType, setJobType] = useState('Full-time');
   const [loading, setLoading] = useState(false);
 
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-
   const jobTypes = [
     { label: 'Full time', value: 'full-time' },
     { label: 'Part time', value: 'part-time' },
@@ -32,29 +29,27 @@ export default function JobForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    setSuccess(false);
 
-    if (!title || !company || !location || !description) {
-      setError('All fields are required.');
-      setLoading(false);
+    const shouldThrow = localStorage.getItem('jobCreateError') === 'true';
+    const newJob = {
+      title,
+      company,
+      location,
+      description,
+      jobType,
+      shouldThrow,
+    };
 
-      return;
-    }
-
-    const newJob = { title, company, location, description, jobType };
-
-    const res = await fetch('/api/jobs', {
+    const response = await fetch('/api/jobs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newJob),
     });
 
-    if (res.ok) {
-      const data = await res.json();
+    if (response.ok) {
+      const data = await response.json();
 
       if (data.message) {
-        setSuccess(true);
         setLoading(false);
         addToast({
           title: 'Success',
@@ -64,8 +59,12 @@ export default function JobForm() {
         setTimeout(() => router.push('/'), 1500);
       }
     } else {
-      setError('Something went wrong.');
       setLoading(false);
+      addToast({
+        title: 'Error',
+        description: response.statusText,
+        color: 'danger',
+      });
     }
   };
 
