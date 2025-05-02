@@ -1,7 +1,7 @@
 'use client';
 
 import type { Job } from './types';
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardBody } from '@heroui/card';
 import { Button } from '@heroui/button';
 import { Divider } from '@heroui/divider';
@@ -50,11 +50,19 @@ function CreateJobButton() {
 }
 
 export default function JobsPage() {
+  const [jobsList, setJobList] = useState<JobItem[]>([]);
   const [selectedJob, setSelectedJob] = useState<JobItem | null>(
     STATIC_JOBS_LIST[0]
   );
 
-  const { current: jobsList } = useRef(getStaticAndLocallyAddedJobsList());
+  useEffect(() => {
+    // Check if the window object is available (to avoid SSR issues)
+    // Since the files in Next.js are server-side rendered,
+    // we need to check if the window object is available.
+    if (typeof window !== 'undefined') {
+      setJobList(getStaticAndLocallyAddedJobsList());
+    }
+  }, []);
 
   return (
     <div className='flex jobs-container'>
