@@ -1,15 +1,14 @@
 'use client';
 
 import type { Job } from './types';
-
 import { useRef, useState } from 'react';
 import { Card, CardBody } from '@heroui/card';
 import { Button } from '@heroui/button';
 import { Divider } from '@heroui/divider';
 import { Link } from '@heroui/link';
-
 import { JobIcon } from '@/components/icons/JobIcon';
 import jobsData from '@/app/mocks/jobsData.json';
+import './styles.css';
 
 type JobItem = Job & { id: number };
 
@@ -58,14 +57,17 @@ export default function JobsPage() {
   const { current: jobsList } = useRef(getStaticAndLocallyAddedJobsList());
 
   return (
-    <div className='flex h-screen'>
+    <div className='flex jobs-container'>
       {/* Left Column */}
-      <div className='w-1/3 border-r overflow-y-auto'>
+      <div className='w-1/3'>
         <div className='w-full flex justify-end px-[15px] my-[10px]'>
           <CreateJobButton />
         </div>
-        <Divider />
-        <div className='p-4 space-y-3'>
+        <Divider className='my-4' />
+        <div
+          className='p-4 space-y-3'
+          style={{ height: 'calc(100% - 70px)', overflowX: 'hidden' }}
+        >
           {jobsList.map((job) => (
             <Card
               key={job.id}
@@ -79,7 +81,9 @@ export default function JobsPage() {
             >
               <CardBody className='p-4'>
                 <h2 className='text-lg font-semibold'>{job.title}</h2>
-                <p className='text-sm text-gray-600'>{job.company}</p>
+                <p className='text-sm text-gray-600 heroui-secondary-color'>
+                  {job.company}
+                </p>
                 <p className='text-sm text-gray-500'>{job.location}</p>
               </CardBody>
             </Card>
@@ -101,7 +105,9 @@ export default function JobsPage() {
                 {selectedJob.description}
               </p>
             </div>
-            <Button className='mt-4'>Apply Now</Button>
+            <Button className='mt-4' color='secondary' variant='shadow'>
+              Apply Now
+            </Button>
           </div>
         ) : (
           <div className='flex items-center justify-center h-full text-gray-500'>
