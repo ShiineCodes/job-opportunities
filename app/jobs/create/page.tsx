@@ -40,54 +40,62 @@ export default function JobForm() {
       shouldThrow,
     };
 
+    // Read from local storage and check if job already exists.
+    const jobsList = localStorage.getItem('jobs');
+    const jobs = jobsList ? JSON.parse(jobsList) : [];
+    const jobExists = jobs.some(
+      (job: Job) =>
+        job.title === title &&
+        job.location === location &&
+        job.company === company
+    );
+
+    // If job already exists, show warning toast message.
+    if (jobExists) {
+      setLoading(false);
+      addToast({
+        title: 'Error',
+        description: 'Job with these fields, already exists!',
+        color: 'warning',
+        timeout: 3000,
+      });
+
+      return;
+    }
+
     const response = await fetch('/api/jobs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newJob),
     });
 
-    if (response.ok) {
-      const data = await response.json();
+    try {
+      if (response.ok) {
+        const data = await response.text();
 
-      // Read from local storage and check if job already exists.
-      const jobsList = localStorage.getItem('jobs');
-      const jobs = jobsList ? JSON.parse(jobsList) : [];
-      const jobExists = jobs.some(
-        (job: Job) =>
-          job.title === title &&
-          job.location === location &&
-          job.company === company
-      );
+        // Here we add new job and preserve the old job list data.
+        localStorage.setItem('jobs', JSON.stringify([...jobs, data]));
 
-      // If job already exists, show warning toast message.
-      if (jobExists) {
+        addToast({
+          title: 'Success',
+          description: 'Job created successfully',
+          color: 'success',
+          timeout: 1000,
+          shouldShowTimeoutProgress: true,
+        });
+        setTimeout(() => router.push('/jobs'), 1050);
+      } else {
         addToast({
           title: 'Error',
-          description: 'Job with these fields, already exists!',
-          color: 'warning',
+          description: response.statusText,
+          color: 'danger',
         });
-
-        return;
       }
-
-      // Here we add new job and preserve the old job list data.
-      localStorage.setItem('jobs', JSON.stringify([...jobs, data]));
-
-      setLoading(false);
-      addToast({
-        title: 'Success',
-        description: 'Job created successfully',
-        color: 'success',
-      });
-      setTimeout(() => router.push('/jobs'), 1500);
-    } else {
-      setLoading(false);
-      addToast({
-        title: 'Error',
-        description: response.statusText,
-        color: 'danger',
-      });
+    } catch (error) {
+      console.error('Error:', error);
     }
+
+    setLoading(false);
   };
 
   return (
