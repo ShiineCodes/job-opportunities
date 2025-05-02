@@ -1,12 +1,12 @@
 # Next.js & HeroUI Template
 
-This is a template for creating applications using Next.js 14 (app directory) and HeroUI (v2).
+This is a template for creating applications using Next.js 15 (app directory) and HeroUI (v2).
 
 [Try it on CodeSandbox](https://githubbox.com/heroui-inc/heroui/next-app-template)
 
 ## Technologies Used
 
-- [Next.js 14](https://nextjs.org/docs/getting-started)
+- [Next.js 54](https://nextjs.org/docs/getting-started)
 - [HeroUI v2](https://heroui.com/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Tailwind Variants](https://tailwind-variants.org)
@@ -26,16 +26,17 @@ npx create-next-app -e https://github.com/heroui-inc/next-app-template
 
 ### Install dependencies
 
-You can use one of them `npm`, `yarn`, `pnpm`, `bun`, Example using `npm`:
+You can use one of them `npm`, `yarn`, `pnpm`, `bun`, but prefer `pnpm` to
+avoid lock file mess.
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### Run the development server
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 ### Setup pnpm (optional)
